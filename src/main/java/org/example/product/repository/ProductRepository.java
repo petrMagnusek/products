@@ -12,11 +12,11 @@ public interface ProductRepository {
 
     List<Product> getAllProducts();
 
-    ResponseEntity createProduct(Product product);
+    String createProduct(Product product);
 
     Product getProductById(long id);
 
-    ResponseEntity deleteProduct(long id);
+    String deleteProduct(long id);
 
-    ResponseEntity updateProduct(Product product, long id);
+    String updateProduct(Product product, long id);
 }

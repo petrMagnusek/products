@@ -38,27 +38,27 @@ public class ProductController {
     }
 
     @GetMapping("/products/{id}")
-    public Product getProduct(@PathVariable long id) {
+    public ResponseEntity<Product> getProduct(@PathVariable long id) {
         Product product = productRepository.getProductById(id);
-        return product;
+        return ResponseEntity.ok(product);
     }
 
     @PostMapping("/products")
     public ResponseEntity<String> createProduct(@RequestBody Product product) {
-        ResponseEntity response = productRepository.createProduct(product);
-        return response;
+        String response = productRepository.createProduct(product);
+        return createResponse(response);
     }
 
     @DeleteMapping("/products/{id}")
     public ResponseEntity<String> deleteProduct(@PathVariable long id) {
-        ResponseEntity response = productRepository.deleteProduct(id);
-        return response;
+        String response = productRepository.deleteProduct(id);
+        return createResponse(response);
     }
 
     @PutMapping("/products/{id}")
     public ResponseEntity<String> updateProduct(@RequestBody Product product, @PathVariable long id) {
-        ResponseEntity response = productRepository.updateProduct(product, id);
-        return response;
+        String response = productRepository.updateProduct(product, id);
+        return createResponse(response);
     }
 
     @ExceptionHandler(NoSuchProductExistsException.class)
@@ -69,6 +69,16 @@ public class ProductController {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(exception.getMessage());
+    }
+
+    private ResponseEntity<String> createResponse(String response) {
+        if (response.equals("OK")) {
+            return ResponseEntity.status(HttpStatus.OK).body("Product Updated Successfully!");
+        } else if (response.equals("BAD")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Body has to contain name attribute!");
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
     }
 
 

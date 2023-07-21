@@ -22,23 +22,25 @@ public class ProductRepositoryImpl implements ProductRepository {
     }
 
     @Override
-    public ResponseEntity<String> createProduct(Product product) {
+    public String createProduct(Product product) {
         if (product.getName() == null || product.getName().isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Body has to contain name attribute!");
+            return("BAD");
+            //return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Body has to contain name attribute!");
         }
-
         try {
             products.add(new Product(getHighestID() +1, product.getName(), product.getPrice(), product.getDescription()));
-            return ResponseEntity.status(HttpStatus.CREATED).body("Product Created Successfully!");
+            //return ResponseEntity.status(HttpStatus.CREATED).body("Product Created Successfully!");
+            return("OK");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            return(e.getMessage());
+            //return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
     @Override
-    public ResponseEntity<String> updateProduct(Product product, long id) {
+    public String updateProduct(Product product, long id) {
         if (product.getName() == null || product.getName().isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Body has to contain name attribute!");
+            return "BAD";
         }
         Optional<Product> prod =  products.stream().filter(prd -> prd.getId() == id).findFirst();
         if (!prod.isPresent()) {
@@ -48,9 +50,9 @@ public class ProductRepositoryImpl implements ProductRepository {
                 prod.get().setPrice(product.getPrice());
                 prod.get().setName(product.getName());
                 prod.get().setDescription(product.getDescription());
-                return ResponseEntity.status(HttpStatus.OK).body("Product Updated Successfully!");
+                return ("OK");
             } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+                return e.getMessage();
             }
         }
 
@@ -67,16 +69,16 @@ public class ProductRepositoryImpl implements ProductRepository {
     }
 
     @Override
-    public ResponseEntity deleteProduct(long id) {
+    public String deleteProduct(long id) {
         Optional<Product> product =  products.stream().filter(prod -> prod.getId() == id).findFirst();
         if (!product.isPresent()) {
             throw(new NoSuchProductExistsException("NO PRODUCT PRESENT WITH ID = " + id));
         } else {
             try {
                 products.remove(product.get());
-                return ResponseEntity.status(HttpStatus.OK).body("Product Deleted Successfully!");
+                return("OK");
             } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+                return e.getMessage();
             }
         }
     }
